@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>百宝箱</title>
+    
+    <!-- PWA Settings -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#F5F5F7">
+    
+    <!-- Icons (Placeholder - User will replace) -->
+    <link rel="apple-touch-icon" href="https://via.placeholder.com/192">
+    <link rel="icon" type="image/png" href="https://via.placeholder.com/192">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- Manifest Generator Script -->
+    <script>
+        const manifest = {
+            "name": "百宝箱",
+            "short_name": "百宝箱",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#F5F5F7",
+            "theme_color": "#F5F5F7",
+            "icons": [
+                {
+                    "src": "https://via.placeholder.com/192",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                },
+                {
+                    "src": "https://via.placeholder.com/512",
+                    "sizes": "512x512",
+                    "type": "image/png"
+                }
+            ]
+        };
+        const stringManifest = JSON.stringify(manifest);
+        const blob = new Blob([stringManifest], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(blob);
+        const link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = manifestURL;
+        document.head.appendChild(link);
+    </script>
+</head>
+<body>
+
+    <!-- Main Layout -->
+    <div class="app-layout">
+        
+        <!-- Header -->
+        <header class="app-header">
+            <h1 id="page-title">密码册</h1>
+            <!-- Action Button for Passwords -->
+            <button id="header-action-btn" class="icon-btn" aria-label="新建">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
+            <!-- Back Button for Tools (Hidden by default) -->
+            <button id="header-back-btn" class="icon-btn hidden" aria-label="返回">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+        </header>
+
+        <!-- Content Area -->
+        <main class="content-container">
+            
+            <!-- View: Function Library -->
+            <section id="view-functions" class="view hidden">
+                <!-- Category Filter -->
+                <div class="category-filter">
+                    <button class="filter-chip active" data-filter="all">全部</button>
+                    <button class="filter-chip" data-filter="image">图片</button>
+                    <button class="filter-chip" data-filter="text">文本</button>
+                </div>
+
+                <!-- Waterfall Grid -->
+                <div class="waterfall-grid">
+                    <!-- Function Item: Image Mask -->
+                    <div class="ceramic-card function-card" data-category="image" data-tool="tool-image-mask">
+                        <div class="card-icon blue-gradient">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <path d="M20.4 14.5L16 10l-4 4 1.5 1.5"></path>
+                            </svg>
+                        </div>
+                        <div class="card-content">
+                            <h3>图片圆角遮罩</h3>
+                            <p>批量制作 iOS 风格圆角图标</p>
+                        </div>
+                    </div>
+                    <!-- More placeholders can be added here -->
+                </div>
+            </section>
+
+            <!-- Tool View: Image Mask -->
+            <section id="tool-image-mask" class="view tool-view hidden">
+                <div class="tool-container">
+                    <!-- Upload Area -->
+                    <div class="upload-area" id="mask-upload-area">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="1.5">
+                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                             <polyline points="17 8 12 3 7 8"></polyline>
+                             <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p>点击或拖拽上传图片</p>
+                        <span class="sub-text">支持批量上传</span>
+                        <input type="file" id="mask-file-input" multiple accept="image/*" style="display:none">
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="control-panel ceramic-card">
+                        <div class="control-group">
+                            <div class="label-row">
+                                <label>圆角半径</label>
+                                <span id="radius-value">20%</span>
+                            </div>
+                            <input type="range" id="mask-radius" min="0" max="50" value="22">
+                        </div>
+                        
+                        <div class="control-group toggle-row">
+                            <label>iOS 超平滑圆角</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="mask-squircle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="preset-actions">
+                             <button class="btn-text" id="btn-save-preset">保存预设</button>
+                             <button class="btn-text" id="btn-apply-preset">应用预设</button>
+                        </div>
+                    </div>
+
+                    <!-- Preview Grid -->
+                    <div id="mask-preview-grid" class="preview-grid"></div>
+                </div>
+
+                <!-- Floating Action Button for Export -->
+                <button id="btn-export-mask" class="fab hidden">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    导出
+                </button>
+            </section>
+
+
+            <!-- View: Password Book -->
+            <section id="view-passwords" class="view active">
+                <div id="password-list" class="card-list">
+                    <!-- Dynamic Content -->
+                </div>
+            </section>
+
+            <!-- View: Settings -->
+            <section id="view-settings" class="view hidden">
+                <div class="settings-group">
+                    <h3>数据管理</h3>
+                    <div class="ceramic-card setting-item" id="btn-backup">
+                        <div class="icon-wrapper blue">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                        </div>
+                        <div class="setting-text">
+                            <h4>备份数据</h4>
+                            <p>导出为 ZIP 格式</p>
+                        </div>
+                    </div>
+                    <div class="ceramic-card setting-item" id="btn-import">
+                        <div class="icon-wrapper green">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                        </div>
+                        <div class="setting-text">
+                            <h4>恢复数据</h4>
+                            <p>从 ZIP 文件导入</p>
+                        </div>
+                        <input type="file" id="file-input" accept=".zip" style="display: none;">
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <h3>存储占用</h3>
+                    <div class="ceramic-card setting-item">
+                        <div class="icon-wrapper orange">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                            </svg>
+                        </div>
+                        <div class="setting-text">
+                            <h4>当前占用</h4>
+                            <p id="storage-usage">计算中...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <h3>关于</h3>
+                    <a href="https://discord.gg/placeholder" target="_blank" class="ceramic-card setting-item link-item">
+                        <div class="icon-wrapper purple">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                            </svg>
+                        </div>
+                        <div class="setting-text">
+                            <h4>联系开发者</h4>
+                            <p>加入 Discord 社区</p>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item" data-target="view-functions">
+                <div class="nav-icon">
+                    <!-- Grid Icon -->
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                </div>
+                <span>功能库</span>
+            </button>
+            <button class="nav-item active" data-target="view-passwords">
+                <div class="nav-icon">
+                    <!-- Lock Icon -->
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                </div>
+                <span>密码册</span>
+            </button>
+            <button class="nav-item" data-target="view-settings">
+                <div class="nav-icon">
+                    <!-- Sliders Icon -->
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="4" y1="21" x2="4" y2="14"></line>
+                        <line x1="4" y1="10" x2="4" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="3"></line>
+                        <line x1="20" y1="21" x2="20" y2="16"></line>
+                        <line x1="20" y1="12" x2="20" y2="3"></line>
+                        <line x1="1" y1="14" x2="7" y2="14"></line>
+                        <line x1="9" y1="8" x2="15" y2="8"></line>
+                        <line x1="17" y1="16" x2="23" y2="16"></line>
+                    </svg>
+                </div>
+                <span>设置</span>
+            </button>
+        </nav>
+
+        <!-- Modals -->
+        
+        <!-- Add/Edit Password Modal -->
+        <div id="modal-password" class="modal-overlay hidden">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h3 id="modal-title">新建密码项</h3>
+                    <button class="btn-close" id="btn-close-modal">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-password">
+                        <input type="hidden" name="id" id="edit-id">
+                        <div class="form-group">
+                            <label>平台名称</label>
+                            <input type="text" name="platform" id="input-platform" placeholder="例如：Google" required>
+                        </div>
+                        <div class="form-group">
+                            <label>账号 / 用户名</label>
+                            <input type="text" name="account" id="input-account" placeholder="name@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>密码</label>
+                            <div class="password-input-wrapper">
+                                <input type="text" name="password" id="input-password" placeholder="建议使用复杂密码" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>分组</label>
+                            <input type="text" name="group" id="input-group" placeholder="例如：社交、工作 (选填)">
+                        </div>
+                        <div class="form-group">
+                            <label>备注</label>
+                            <textarea name="remarks" id="input-remarks" placeholder="其他重要信息 (选填)" rows="3"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" id="btn-cancel-modal">取消</button>
+                            <button type="submit" class="btn btn-primary">保存</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Context Menu -->
+        <div id="context-menu" class="context-menu hidden">
+            <div class="menu-item" id="ctx-edit">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                <span>编辑</span>
+            </div>
+            <div class="menu-item destructive" id="ctx-delete">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                <span>删除</span>
+            </div>
+        </div>
+        <div id="context-overlay" class="context-overlay hidden"></div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast hidden">已复制到剪贴板</div>
+
+    </div>
+
+    <!-- Logic -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>
