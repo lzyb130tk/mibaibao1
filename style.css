@@ -322,7 +322,7 @@ input:checked + .slider:before { transform: translateX(20px); }
     border-radius: 0;
     
     padding-top: 10px;
-    padding-bottom: calc(20px + env(safe-area-inset-bottom)); /* Fallback + Env */
+    padding-bottom: calc(env(safe-area-inset-bottom) + 5px);
     margin: 0;
     
     display: flex;
