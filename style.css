@@ -265,24 +265,24 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 .context-menu {
     position: fixed;
-    bottom: 20px;
-    left: 20px;
-    right: 20px;
-    height: var(--nav-height);
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(25px) saturate(180%);
-    -webkit-backdrop-filter: blur(25px) saturate(180%);
-    border-radius: 35px; /* Pill shape */
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    padding-bottom: 0; /* Remove padding as it's floating */
-    margin-bottom: var(--safe-bottom); /* Push up from home bar */
-    overflow: hidden;
-    z-index: 950;
+    bottom: calc(env(safe-area-inset-bottom) + 12px);
+    left: 12px;
+    right: 12px;
+    height: auto; /* Allow menu to adjust to content */
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-radius: 16px;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    overflow: visible;
+    z-index: 999;
     transform: translateY(150%);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+    display: block; /* Vertical list */
+    padding: 0;
+    overflow: hidden; /* For border radius */
 }
 .context-menu.active { transform: translateY(0); }
 
@@ -322,7 +322,7 @@ input:checked + .slider:before { transform: translateX(20px); }
     border-radius: 0;
     
     padding-top: 10px;
-    padding-bottom: calc(env(safe-area-inset-bottom) + 5px);
+    padding-bottom: calc(env(safe-area-inset-bottom) + 5px); /* Ensure space for home indicator */
     margin: 0;
     
     display: flex;
